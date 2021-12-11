@@ -29,6 +29,19 @@ if ( NOT DEFINED ZERO_COMPILER_CONFIGURED )
     set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
     set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
+    # Testing
+    if ( NOT DEFINED ZERO_TEST_ENABLED )
+        set( ZERO_TEST_ENABLED ON )
+        #option( ZERO_TEST_ENABLED "Enable Testing" ON )
+    endif ( NOT DEFINED ZERO_TEST_ENABLED )
+
+    if ( ZERO_TEST_ENABLED )
+        include(CTest)
+        enable_testing()
+
+        message( STATUS "${PROJECT_NAME} - tests are enabled" )
+    endif ( ZERO_TEST_ENABLED )
+
     set( ZERO_COMPILER_CONFIGURED ON )
     message( STATUS "${PROJECT_NAME} - Compilers configured" )
 

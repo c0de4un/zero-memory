@@ -5,6 +5,7 @@
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 if ( DEBUG )
+	set( ZERO_LOG_TEST_ENABLED OFF )
 	add_subdirectory( ${ZERO_LOGGER_DIR} )
 endif ( DEBUG )
 

@@ -1,9 +1,5 @@
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-if ( NOT DEFINED ZERO_TEST_ENABLED )
-    option( ZERO_TEST_ENABLED "Enable Testing" ON )
-endif ( NOT DEFINED ZERO_TEST_ENABLED )
-
 if ( NOT DEFINED ZERO_OUTPUT_DIR )
     set( ZERO_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin/${PLATFROM}" )
 
@@ -19,7 +15,6 @@ endif ( NOT DEFINED ZERO_CONFIG_INCLUDE_DIR )
 if ( NOT DEFINED ZERO_LOGGER_INCLUDE_DIR )
     set( ZERO_LOGGER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/zero-logger/src/lib/public" )
     set( ZERO_LOGGER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/zero-logger" )
-    set( ZERO_TEST_ENABLED OFF )
     message( STATUS "${PROJECT_NAME} - zero-logger included" )
 endif ( NOT DEFINED ZERO_LOGGER_INCLUDE_DIR )
 

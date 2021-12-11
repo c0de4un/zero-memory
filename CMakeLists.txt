@@ -24,20 +24,20 @@ set( PROJECT_VERSION 0.1 )
 project( ${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES C CXX )
 
 # Include Compiler Configs
-include( "cmake/compiler.cmake" )
+include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/compiler.cmake" )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CONFIGS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Options
-include( "cmake/options.cmake" )
+include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/options.cmake" )
 
 # Platform
-include( "cmake/platform.cmake" )
+include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/platform.cmake" )
 
 # BuildType
-include( "cmake/buildType.cmake" )
+include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/buildType.cmake" )
 
 # zeroEngine.API
 if ( NOT DEFINED ZERO_CONFIG_INCLUDE_DIR )
@@ -50,15 +50,19 @@ endif ( NOT DEFINED ZERO_CONFIG_INCLUDE_DIR )
 # LIBRARIES
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-include( "cmake/libs.cmake" )
+include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/libs.cmake" )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # MODULES
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Library
-add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/src/lib" )
+set( ZERO_MEMORY_LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/lib" )
+add_subdirectory( ${ZERO_MEMORY_LIB_SRC_DIR} )
 
 # Tests
+if ( ZERO_TEST_ENABLED )
+    add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/src/tests" )
+endif ( ZERO_TEST_ENABLED )
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
