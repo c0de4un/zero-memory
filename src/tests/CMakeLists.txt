@@ -44,7 +44,13 @@ set_target_properties( zero_memory_tests PROPERTIES
     VERSION ${PROJECT_VERSION}
     RUNTIME_OUTPUT_DIRECTORY ${ZERO_OUTPUT_DIR} )
 
+# Link with zero-async
+target_include_directories( zero_memory_tests PUBLIC "${ZERO_ASYNC_CORE_INCLUDE_DIR}" )
+target_include_directories( zero_memory_tests PUBLIC "${ZERO_ASYNC_PLATFORM_INCLUDE_DIR}" )
+target_link_libraries( zero_memory_tests zero_async )
+
 # Link with zero-memory
+target_include_directories( zero_memory_tests PUBLIC "${ZERO_MEMORY_LIB_SRC_DIR}/${PLATFORM}/public" )
 target_include_directories( zero_memory_tests PUBLIC "${ZERO_MEMORY_LIB_SRC_DIR}/core/public" )
 target_link_libraries( zero_memory_tests zero_memory )
 

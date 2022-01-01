@@ -25,9 +25,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ZERO_CORE_MEMORY_MANAGER_HPP
-#define ZERO_CORE_MEMORY_MANAGER_HPP
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -37,12 +34,7 @@
 // Include zero::api
 #ifndef ZERO_API_HPP
 #include <zero/core/cfg/zero_api.hpp>
-#endif // !ZERO_API_HPP
-
-// Include zero::mutex
-#ifndef ZERO_MUTEX_HPP
-#include <zero/core/cfg/zero_mutex.hpp>
-#endif /// !ZERO_MUTEX_HPP
+#endif /// !ZERO_API_HPP
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TYPES
@@ -57,59 +49,17 @@ namespace zero
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		// MemoryManager
+		// zero::core::IPointer
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 		/*!
-		  \brief Memory management facade
+		 \brief Smart-pointer behavior contract
 
-		  \version 1.0
+		 \version 1.0
 		*/
-		ZERO_API class MemoryManager
+		template <typename T>
+		ZERO_API class IPointer
 		{
-
-		private:
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// DELETED
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			MemoryManager(const MemoryManager&) = delete;
-			MemoryManager(MemoryManager&&)      = delete;
-
-			MemoryManager& operator=(const MemoryManager&) = delete;
-			MemoryManager& operator=(MemoryManager&&)      = delete;
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-		protected:
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// TYPES
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			using instance_ptr = MemoryManager*;
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// FIELDS
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			static instance_ptr mInstance;
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// CONSTRUCTOR
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			/*!
-			 \brief MemoryManager constructor
-			*/
-			explicit MemoryManager();
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 		public:
 
@@ -120,35 +70,21 @@ namespace zero
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 			/*!
-			  \brief MemoryManager destructor
-
-			  \throws no exceptions
+			 \throws no exceptions
 			*/
-			virtual ~MemoryManager() ZERO_NOEXCEPT;
+			virtual ~IPointer() ZERO_NOEXCEPT = default;
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// GETTERS & SETTERS
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// METHODS
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-			/*!
-			  \brief Initialize MemoryManager instance
-
-			  \thread_safety - main-thread only
-			  \param pInstance - MemoryManager instance
-			*/
-			static void Initialize(MemoryManager* const pInstance);
-
-			/*!
-			  \brief Terminate MemoryManager
-
-			  \thread_safety - main-thread only
-			  \throws - no exceptions
-			*/
-			static void Terminate() ZERO_NOEXCEPT;
-
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-		}; /// zero::core::MemoryManager
+		}; /// zero::core::IPointer
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -156,8 +92,4 @@ namespace zero
 
 } /// zero
 
-using zMemory = zero::core::MemoryManager;
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-#endif // !ZERO_CORE_MEMORY_MANAGER_HPP

@@ -19,8 +19,9 @@ if ( NOT DEFINED ZERO_LOGGER_INCLUDE_DIR )
 endif ( NOT DEFINED ZERO_LOGGER_INCLUDE_DIR )
 
 if ( NOT DEFINED ZERO_ASYNC_INCLUDE_DIR )
-    set( ZERO_ASYNC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/zero-async/src/lib/public" )
     set( ZERO_ASYNC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/zero-async" )
+    set( ZERO_ASYNC_CORE_INCLUDE_DIR "${ZERO_ASYNC_DIR}/src/lib/core/public" )
+    set( ZERO_ASYNC_PLATFORM_INCLUDE_DIR "${ZERO_ASYNC_DIR}/src/lib/${PLATFORM}/public" )
     message( STATUS "${PROJECT_NAME} - zero-async included" )
 endif ( NOT DEFINED ZERO_ASYNC_INCLUDE_DIR )
 

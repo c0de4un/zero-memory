@@ -26,6 +26,11 @@ project( ${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES C CXX )
 # Core
 include( "core/core.cmake" )
 
+# Platform
+include( "${PLATFORM}/${PLATFORM}.cmake" )
+
+# @TODO: Render
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # BUILD
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -45,6 +50,11 @@ elseif ( ZERO_BUILD_TYPE STREQUAL "SHARED" )
         ARCHIVE_OUTPUT_DIRECTORY "${ZERO_OUTPUT_DIR}"
         LIBRARY_OUTPUT_DIRECTORY "${ZERO_OUTPUT_DIR}" )
 endif ( ZERO_BUILD_TYPE STREQUAL "STATIC" )
+
+# Link with zero-async
+target_include_directories( zero_memory PUBLIC "${ZERO_ASYNC_CORE_INCLUDE_DIR}" )
+target_include_directories( zero_memory PUBLIC "${ZERO_ASYNC_PLATFORM_INCLUDE_DIR}" )
+target_link_libraries( zero_memory zero_async )
 
 # Link with zero-config
 target_include_directories( zero_memory PUBLIC "${ZERO_CONFIG_INCLUDE_DIR}" )

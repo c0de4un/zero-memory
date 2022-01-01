@@ -30,11 +30,11 @@ include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/compiler.cmake" )
 # CONFIGS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# Options
-include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/options.cmake" )
-
 # Platform
 include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/platform.cmake" )
+
+# Options
+include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/options.cmake" )
 
 # BuildType
 include( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/buildType.cmake" )
