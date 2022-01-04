@@ -39,10 +39,21 @@
 #include "IPointer.hxx"
 #endif /// !ZERO_CORE_I_POINTER_HXX
 
-// @TODO: Include zero::memory
+// Include zero::memory
 #ifndef ZERO_MEMORY_HPP
 #include <zero/core/cfg/zero_memory.hpp>
 #endif /// !ZERO_MEMORY_HPP
+
+// DEBUG
+#ifdef ZERO_DEBUG
+
+// Include zero::debug
+#ifndef ZERO_DEBUG_HPP
+#include <zero/core/cfg/zero_debug.hpp>
+#endif /// !ZERO_DEBUG_HPP
+
+#endif
+// DEBUG
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TYPES
@@ -107,19 +118,80 @@ namespace zero
 			*/
 			virtual ~UniquePointer() noexcept
 			{
+				zDelete(mAddress);
 			}
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// IPointer: GETTERS & SETTERS
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+			/*!
+			\brief Returns raw-pointer
+
+			\throws - no exceptions
+			*/
+			virtual T* get() const noexcept final
+			{ return mAddress; }
+
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// IPointer: METHODS
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+			virtual void reset() noexcept final
+			{
+				zDelete(mAddress);
+				mAddress = nullptr;
+			}
+
+			virtual void reset(T* const pAddress) final
+			{
+				zDelete(mAddress);
+				mAddress = pAddress;
+			}
+
+			virtual long use_count() const noexcept
+			{ return 1; }
+
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// OPERATORS
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			void operator=(T* const ptr) noexcept
+			{
+				reset(ptr);
+			}
+
+			void operator=(nullptr_t) noexcept
+			{
+				reset();
+			}
+
+			bool operator==(T* const ptr)
+			{ return mAddress == ptr; }
+
+			bool operator==(zIPointer<T>& ptr)
+			{ return ptr.get() == mAddress; }
+
+			T& operator*() noexcept
+			{
+#ifdef ZERO_DEBUG /// DEBUG
+				zAssert(mAddress && "UniquePointer::T& =: fatal logic !");
+#endif /// DEBUG
+
+				return *mAddress;
+			}
+//
+//			T* operator->() noexcept
+//			{ return get(); }
+//
+//			void operator=(T* const ptr) noexcept
+//			{
+//#ifdef ZERO_DEBUG /// DEBUG
+//				zAssert(ptr && "UniquePointer::=(T*): bad logic");
+//#endif /// DEBUG
+//
+//				reset(ptr);
+//			}
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -131,6 +203,8 @@ namespace zero
 
 }
 
+template <typename T>
+using zUnique = zero::core::UniquePointer<T>;
 
 #define ZERO_CORE_UNIQUE_POINTER_DECL
 

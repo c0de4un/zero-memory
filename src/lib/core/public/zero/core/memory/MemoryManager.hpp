@@ -244,6 +244,9 @@ namespace zero
 				zAssert(mInstance != nullptr && "MemoryManager::Delete: instance not set");
 #endif /// DEBUG
 
+				if (!ptr)
+					return;
+
 				mInstance->mAllocated -= sizeof(T);
 
 				delete ptr;
@@ -256,6 +259,9 @@ namespace zero
 				zAssert(mInstance != nullptr && "MemoryManager::DeleteArray: instance not set");
 				zAssert(count && "MemoryManager::DeleteArray: invalid count");
 #endif /// DEBUG
+
+				if (!ptr)
+					return;
 
 				mInstance->mAllocated -= sizeof(T) * count;
 
@@ -271,7 +277,6 @@ namespace zero
 	} /// zero::core
 
 } /// zero
-zero::core::MemoryManager* zero::core::MemoryManager::mInstance(nullptr);
 
 using zMemory = zero::core::MemoryManager;
 

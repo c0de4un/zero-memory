@@ -75,7 +75,7 @@ namespace zero
 			/*!
 			 \throws no exceptions
 			*/
-			virtual ~IPointer() ZERO_NOEXCEPT = default;
+			virtual ~IPointer() noexcept = default;
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// GETTERS & SETTERS
@@ -86,16 +86,16 @@ namespace zero
 
 			 \throws - no exceptions
 			*/
-			T* get() const ZERO_NOEXCEPT = 0;
+			virtual T* get() const noexcept = 0;
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// METHODS
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-			void reset() noexcept = 0;
-			void reset(T* const pAddress)  = 0;
+			virtual void reset() noexcept = 0;
+			virtual void reset(T* const pAddress)  = 0;
 
-			long use_count() const noexcept = 0;
+			virtual long use_count() const noexcept = 0;
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

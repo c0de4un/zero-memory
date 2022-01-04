@@ -31,33 +31,95 @@
 // INCLUDES
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// HEADER
-#ifndef ZERO_CORE_MEMORY_MANAGER_HPP
-#include "../../../../public/zero/core/memory/MemoryManager.hpp"
-#endif // !ZERO_CORE_MEMORY_MANAGER_HPP
+// Include googletest
+#include <gtest/gtest.h>
+
+// Include zero::memory
+#ifndef ZERO_MEMORY_HPP
+#include <zero/core/cfg/zero_memory.hpp>
+#endif /// !ZERO_MEMORY_HPP
+
+// Include zero::core::Log
+#ifndef ZERO_CORE_LOG_HPP
+#include <zero/core/log/Log.hpp>
+#endif /// !ZERO_CORE_LOG_HPP
+
+// Include zero::core::DefaultLogger
+#ifndef ZERO_CORE_DEFAULT_LOGGER_HPP
+#include <zero/core/log/DefaultLogger.hpp>
+#endif /// !ZERO_CORE_DEFAULT_LOGGER_HPP
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// MemoryManager
+// UNITS
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-namespace zero
-{
+TEST(zero_memory, unique_ptr_deref) {
+	zLog::Initialize(new zDefaultLogger());
+	zMemory::Initialize();
 
-	namespace core
 	{
-
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		// FIELDS
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-		MemoryManager::instance_ptr MemoryManager::mInstance(nullptr);
-
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+		zUnique<int> uptr(zNew<int>(7));
+		int* const raw(uptr.get());
+		EXPECT_EQ(*raw == 7, true);
 	}
 
+	zMemory::Terminate();
+	zLog::Terminate();
+}
+
+TEST(zero_memory, unique_ptr_deref_operator) {
+	zLog::Initialize(new zDefaultLogger());
+	zMemory::Initialize();
+
+	{
+		zUnique<int> uptr(zNew<int>(7));
+		EXPECT_EQ(*uptr == 7, true);
+	}
+
+	zMemory::Terminate();
+	zLog::Terminate();
+}
+
+TEST(zero_memory, unique_ptr_reset) {
+	zLog::Initialize(new zDefaultLogger());
+	zMemory::Initialize();
+
+	{
+		zUnique<int> uptr(zNew<int>(7));
+		uptr.reset();
+		EXPECT_EQ(uptr.get() == nullptr, true);
+	}
+
+	zMemory::Terminate();
+	zLog::Terminate();
+}
+
+TEST(zero_memory, unique_ptr_reset_operator) {
+	zLog::Initialize(new zDefaultLogger());
+	zMemory::Initialize();
+
+	{
+		zUnique<int> uptr(zNew<int>(7));
+		uptr = nullptr;
+		EXPECT_EQ(uptr.get() == nullptr, true);
+	}
+
+	zMemory::Terminate();
+	zLog::Terminate();
+}
+
+TEST(zero_memory, unique_ptr_compare_operator) {
+	zLog::Initialize(new zDefaultLogger());
+	zMemory::Initialize();
+
+	{
+		int* const raw(zNew<int>(7));
+		zUnique<int> uptr(raw);
+		EXPECT_EQ(uptr == raw, true);
+	}
+
+	zMemory::Terminate();
+	zLog::Terminate();
 }
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
