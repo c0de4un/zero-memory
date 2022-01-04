@@ -4,6 +4,7 @@ Memory management Library. Part of zeroEngine.
 # Features
  * compile-time type awareness;
  * RTTI;
+ * SHARED and STATIC output support;
  * lightweight and designed for mobile;
  * modules-based API;
  * STL pointers & allocators APIs support;
@@ -19,13 +20,50 @@ Memory management Library. Part of zeroEngine.
  * C++ 14+;
  * CMake;
 
-# Usage
+# Examples
+## New & Delete
 ```C++
-#include <zero/core/cfg/zero_mutex.hpp>
+#include <zero/core/cfg/zero_memory.hpp>
+
+#include <string>
+#include <iostream>
 
 int main()
 {
-	zMutex mutex;
-	mutex.lock();
+	zMemory::Initialize();
+
+	int* const val(zNew(7));
+
+	size_t allocated(zMemory::getAllocated());
+	std::cout << "allocated: " << std::to_string(allocated) << "\n";
+
+	zDelete(val);
+
+	allocated = zMemory::getAllocated();
+	std::cout << "allocated: " << std::to_string(allocated) << "\n";
+
+	int* arr(zNewArray(5));
+	zDeleteArray(arr, 5);
+
+	zMemory::Terminate();
+
+	return 0;
+}
+```
+
+## Pointers
+```C++
+#include <zero/core/cfg/zero_memory.hpp>
+
+int main()
+{
+	zMemory::Initialize();
+
+	zShared<int> sptr(zNew(9));
+	zShared.reset();
+
+	zMemory::Terminate();
+
+	return 0;
 }
 ```

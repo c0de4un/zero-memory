@@ -25,30 +25,27 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#ifndef ZERO_CORE_UNIQUE_POINTER_HPP
+#define ZERO_CORE_UNIQUE_POINTER_HPP
+
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // INCLUDES
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// HEADER
-#ifndef ZERO_CORE_DEFAULT_MEMORY_HPP
-#include "../../../../public/zero/core/memory/DefaultMemory.hpp"
-#endif // !ZERO_CORE_DEFAULT_MEMORY_HPP
+// Include zero::core::IPointer
+#ifndef ZERO_CORE_I_POINTER_HXX
+#include "IPointer.hxx"
+#endif /// !ZERO_CORE_I_POINTER_HXX
 
-// DEBUG
-#if defined(ZERO_DEBUG)
-
-// Include zero::debug
-#ifndef ZERO_DEBUG_HPP
-#include <zero/core/cfg/zero_debug.hpp>
-#endif // !ZERO_DEBUG_HPP
-
-#endif
-// DEBUG
+// @TODO: Include zero::memory
+#ifndef ZERO_MEMORY_HPP
+#include <zero/core/cfg/zero_memory.hpp>
+#endif /// !ZERO_MEMORY_HPP
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// DefaultMemory
+// TYPES
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 namespace zero
@@ -60,23 +57,73 @@ namespace zero
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		// CONSTRUCTOR & DESTRUCTOR
+		// zero::core::UniquePointer
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-		DefaultMemory::DefaultMemory()
-			: MemoryManager()
-		{
-#if defined(ZERO_DEBUG) /// DEBUG
-			zLog::debug("DefaultMemory::construct");
-#endif /// DEBUG
-		}
+		/*!
+		  \brief Unique pointer implementation,
+		  compatable with STL API
 
-		DefaultMemory::~DefaultMemory() ZERO_NOEXCEPT
+		  \version 1.0
+		*/
+		template <typename T>
+		ZERO_API class UniquePointer final : public zIPointer<T>
 		{
-#if defined(ZERO_DEBUG) /// DEBUG
-			zLog::debug("DefaultMemory::destruct");
-#endif /// DEBUG
-		}
+
+		private:
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// FIELD
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			T* mAddress;
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+		public:
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// CONSTRUCTOR & DESTRUCTOR
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			/*!
+			  \brief UniquePointer constructor
+
+			  \param pAddress - memory address
+			*/
+			explicit UniquePointer(T* const pAddress)
+				: mAddress(pAddress)
+			{
+			}
+
+			/*!
+			  \brief UniquePointer destructor
+
+			  \throws - no exceptions
+			*/
+			virtual ~UniquePointer() noexcept
+			{
+			}
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// IPointer: GETTERS & SETTERS
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// IPointer: METHODS
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// OPERATORS
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+		}; /// zero::core::UniquePointer
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -84,4 +131,9 @@ namespace zero
 
 }
 
+
+#define ZERO_CORE_UNIQUE_POINTER_DECL
+
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#endif /// !ZERO_CORE_UNIQUE_POINTER_HPP

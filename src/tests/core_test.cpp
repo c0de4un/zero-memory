@@ -34,15 +34,6 @@
 // Include googletest
 #include <gtest/gtest.h>
 
-// Include zero::memory
-#ifndef ZERO_CORE_MEMORY_MANAGER_HPP
-#include <zero/core/memory/MemoryManager.hpp>
-#endif // !ZERO_CORE_MEMORY_MANAGER_HPP
-
-#ifndef ZERO_CORE_DEFAULT_MEMORY_HPP
-#include <zero/core/memory/DefaultMemory.hpp>
-#endif // !ZERO_CORE_DEFAULT_MEMORY_HPP
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // UNITS
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

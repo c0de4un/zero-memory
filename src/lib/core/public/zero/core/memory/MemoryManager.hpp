@@ -39,10 +39,26 @@
 #include <zero/core/cfg/zero_api.hpp>
 #endif // !ZERO_API_HPP
 
+// Include zero::atomic
+#ifndef ZERO_ATOMIC_HPP
+#include <zero/core/cfg/zero_atomic.hpp>
+#endif /// !ZERO_ATOMIC_HPP
+
 // Include zero::mutex
 #ifndef ZERO_MUTEX_HPP
 #include <zero/core/cfg/zero_mutex.hpp>
 #endif /// !ZERO_MUTEX_HPP
+
+// DEBUG
+#if defined(ZERO_DEBUG)
+
+// Include zero::debug
+#ifndef ZERO_DEBUG_HPP
+#include <zero/core/cfg/zero_debug.hpp>
+#endif // !ZERO_DEBUG_HPP
+
+#endif
+// DEBUG
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // TYPES
@@ -65,26 +81,10 @@ namespace zero
 
 		  \version 1.0
 		*/
-		ZERO_API class MemoryManager
+		ZERO_API class MemoryManager final
 		{
 
 		private:
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// DELETED
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			MemoryManager(const MemoryManager&) = delete;
-			MemoryManager(MemoryManager&&)      = delete;
-
-			MemoryManager& operator=(const MemoryManager&) = delete;
-			MemoryManager& operator=(MemoryManager&&)      = delete;
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-		protected:
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -99,15 +99,32 @@ namespace zero
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 			static instance_ptr mInstance;
+			zAtomic<size_t> mAllocated;
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// CONSTRUCTOR
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 			/*!
-			 \brief MemoryManager constructor
+			\brief MemoryManager constructor
 			*/
-			explicit MemoryManager();
+			explicit MemoryManager()
+				: mAllocated(sizeof(MemoryManager))
+			{
+#if defined(ZERO_DEBUG) /// DEBUG
+				zLog::debug("MemoryManager::construct");
+#endif /// DEBUG
+			}
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// DELETED
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			MemoryManager(const MemoryManager&) = delete;
+			MemoryManager(MemoryManager&&)      = delete;
+
+			MemoryManager& operator=(const MemoryManager&) = delete;
+			MemoryManager& operator=(MemoryManager&&)      = delete;
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -124,7 +141,32 @@ namespace zero
 
 			  \throws no exceptions
 			*/
-			virtual ~MemoryManager() ZERO_NOEXCEPT;
+			~MemoryManager() ZERO_NOEXCEPT
+			{
+#if defined(ZERO_DEBUG) /// DEBUG
+				zLog::debug("MemoryManager::destruct");
+#endif /// DEBUG
+			}
+
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			// GETTERS & SETTERS
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+			/*!
+			  \brief Retursn bytes allocated
+
+			  \thread_safety - atomics used
+			  \throws - no exceptions
+			*/
+			static size_t getAllocated() noexcept
+			{
+#ifdef ZERO_DEBUG /// DEBUG
+				zAssert(mInstance != nullptr && "MemoryManager::getAllocated: instance not set");
+#endif /// DEBUG
+
+				const size_t output(mInstance->mAllocated);
+				return output;
+			}
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			// METHODS
@@ -134,9 +176,20 @@ namespace zero
 			  \brief Initialize MemoryManager instance
 
 			  \thread_safety - main-thread only
-			  \param pInstance - MemoryManager instance
 			*/
-			static void Initialize(MemoryManager* const pInstance);
+			static void Initialize()
+			{
+#if defined(ZERO_DEBUG) /// DEBUG
+				zAssert(!mInstance && "MemoryManager::Initialize: already initialized");
+
+				zLog::debug("MemoryManager::Initialize");
+#else /// !DEBUG
+				if ( mInstance )
+					return;
+#endif /// DEBUG
+
+				mInstance = new MemoryManager();
+			}
 
 			/*!
 			  \brief Terminate MemoryManager
@@ -144,7 +197,70 @@ namespace zero
 			  \thread_safety - main-thread only
 			  \throws - no exceptions
 			*/
-			static void Terminate() ZERO_NOEXCEPT;
+			static void Terminate() ZERO_NOEXCEPT
+			{
+#if defined(ZERO_DEBUG) /// DEBUG
+				zAssert(mInstance && "MemoryManager::Terminate: not initialized");
+
+				zLog::debug("MemoryManager::Terminate");
+#else /// !DEBUG
+				if (!mInstance)
+					return;
+#endif /// DEBUG
+
+				delete mInstance;
+				mInstance = nullptr;
+			}
+
+			template <typename T, typename... Args>
+			static T* New(Args&&... args)
+			{
+#ifdef ZERO_DEBUG /// DEBUG
+				zAssert(mInstance != nullptr && "MemoryManager::New: instance not set");
+#endif /// DEBUG
+
+				mInstance->mAllocated += sizeof(T);
+
+				return new T(args...);
+			}
+
+			template <typename T>
+			static T* NewArray(const size_t count)
+			{
+#ifdef ZERO_DEBUG /// DEBUG
+				zAssert(mInstance != nullptr && "MemoryManager::NewArray: instance not set");
+				zAssert(count && "MemoryManager::NewArray: invalid count");
+#endif /// DEBUG
+
+				mInstance->mAllocated += sizeof(T) * count;
+
+				return new T[count]();
+			}
+
+			template <typename T>
+			static void Delete(T* const ptr) noexcept
+			{
+#ifdef ZERO_DEBUG /// DEBUG
+				zAssert(mInstance != nullptr && "MemoryManager::Delete: instance not set");
+#endif /// DEBUG
+
+				mInstance->mAllocated -= sizeof(T);
+
+				delete ptr;
+			}
+
+			template <typename T>
+			static void DeleteArray(T* const ptr, const size_t count) noexcept
+			{
+#ifdef ZERO_DEBUG /// DEBUG
+				zAssert(mInstance != nullptr && "MemoryManager::DeleteArray: instance not set");
+				zAssert(count && "MemoryManager::DeleteArray: invalid count");
+#endif /// DEBUG
+
+				mInstance->mAllocated -= sizeof(T) * count;
+
+				delete[] ptr;
+			}
 
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -155,6 +271,7 @@ namespace zero
 	} /// zero::core
 
 } /// zero
+zero::core::MemoryManager* zero::core::MemoryManager::mInstance(nullptr);
 
 using zMemory = zero::core::MemoryManager;
 

@@ -30,6 +30,7 @@ set( ZERO_MEMORY_TESTS_HEADERS
 
 set( ZERO_MEMORY_TESTS_PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/" )
 set( ZERO_MEMORY_TESTS_SOURCES
+    "${ZERO_MEMORY_TESTS_PUBLIC}memory_tests.cpp"
     "${ZERO_MEMORY_TESTS_PUBLIC}core_test.cpp" )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -43,6 +44,10 @@ add_executable( zero_memory_tests ${ZERO_MEMORY_TESTS_HEADERS} ${ZERO_MEMORY_TES
 set_target_properties( zero_memory_tests PROPERTIES
     VERSION ${PROJECT_VERSION}
     RUNTIME_OUTPUT_DIRECTORY ${ZERO_OUTPUT_DIR} )
+
+# Link with zero-logger
+target_include_directories( zero_memory_tests PUBLIC "${ZERO_LOGGER_INCLUDE_DIR}" )
+target_link_libraries( zero_memory_tests zero_logger )
 
 # Link with zero-async
 target_include_directories( zero_memory_tests PUBLIC "${ZERO_ASYNC_CORE_INCLUDE_DIR}" )

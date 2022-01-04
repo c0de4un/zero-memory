@@ -25,92 +25,59 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef ZERO_CORE_I_POINTER_HXX
-#define ZERO_CORE_I_POINTER_HXX
-
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // INCLUDES
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Include zero::api
-#ifndef ZERO_API_HPP
-#include <zero/core/cfg/zero_api.hpp>
-#endif /// !ZERO_API_HPP
+// Include googletest
+#include <gtest/gtest.h>
+
+// Include zero::memory
+#ifndef ZERO_MEMORY_HPP
+#include <zero/core/cfg/zero_memory.hpp>
+#endif /// !ZERO_MEMORY_HPP
+
+// Include zero::core::Log
+#ifndef ZERO_CORE_LOG_HPP
+#include <zero/core/log/Log.hpp>
+#endif /// !ZERO_CORE_LOG_HPP
+
+// Include zero::core::DefaultLogger
+#ifndef ZERO_CORE_DEFAULT_LOGGER_HPP
+#include <zero/core/log/DefaultLogger.hpp>
+#endif /// !ZERO_CORE_DEFAULT_LOGGER_HPP
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// TYPES
+// UNITS
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-namespace zero
-{
+TEST(zero_memory, new_operator) {
+	zLog::Initialize(new zDefaultLogger());
+	zMemory::Initialize();
 
-	namespace core
-	{
+	const size_t allocated(zMemory::getAllocated());
+	int* const val(zNew<int>(7));
+	EXPECT_EQ(zMemory::getAllocated() == (allocated + sizeof(int)), true);
+	EXPECT_EQ(val != nullptr, true);
+	EXPECT_EQ(*val == 7, true);
 
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	zMemory::Terminate();
+	zLog::Terminate();
+}
 
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		// zero::core::IPointer
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+TEST(zero_memory, delete_operator) {
+	zLog::Initialize(new zDefaultLogger());
+	zMemory::Initialize();
 
-		/*!
-		 \brief Smart-pointer behavior contract
+	const size_t allocated(zMemory::getAllocated());
+	int* const val = zNew<int>(7);
+	zDelete(val);
+	EXPECT_EQ(zMemory::getAllocated() == allocated, true);
 
-		 \version 1.0
-		*/
-		template <typename T>
-		ZERO_API class IPointer
-		{
-
-		public:
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// DESTRUCTOR
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			/*!
-			 \throws no exceptions
-			*/
-			virtual ~IPointer() ZERO_NOEXCEPT = default;
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// GETTERS & SETTERS
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			/*!
-			 \brief Returns raw-pointer
-
-			 \throws - no exceptions
-			*/
-			T* get() const ZERO_NOEXCEPT = 0;
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			// METHODS
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-			void reset() noexcept = 0;
-			void reset(T* const pAddress)  = 0;
-
-			long use_count() const noexcept = 0;
-
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-		}; /// zero::core::IPointer
-
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-	} /// zero::core
-
-} /// zero
-
-template <typename T>
-using zIPointer = zero::core::IPointer<T>;
-#define ZERO_CORE_I_POINTER_DECL
+	zMemory::Terminate();
+	zLog::Terminate();
+}
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-#endif /// !ZERO_CORE_I_POINTER_HXX
